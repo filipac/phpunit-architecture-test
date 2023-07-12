@@ -5,15 +5,12 @@ declare(strict_types=1);
 namespace PHPUnit\Architecture\Asserts\Properties;
 
 use PHPUnit\Architecture\Elements\Layer\Layer;
-use PHPUnit\Architecture\Enums\Visibility;
 
 /**
  * Asserts for objects methods
  */
 trait PropertiesAsserts
 {
-    abstract public static function assertEquals($expected, $actual, string $message = ''): void;
-
     /**
      * Search public properties in layerA
      *
@@ -28,7 +25,7 @@ trait PropertiesAsserts
         foreach ($layers as $layer) {
             foreach ($layer as $object) {
                 foreach ($object->properties as $property) {
-                    if ($property->visibility === Visibility::PUBLIC) {
+                    if ($property->visibility === 'public') {
                         $result[] = "$object->name : {$property->name} <- public";
                     }
                 }
@@ -41,4 +38,6 @@ trait PropertiesAsserts
             'Found public property: ' . implode("\n", $result)
         );
     }
+
+    abstract public static function assertEquals($expected, $actual, string $message = ''): void;
 }

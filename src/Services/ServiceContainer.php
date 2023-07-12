@@ -39,6 +39,7 @@ final class ServiceContainer
             ->files()
             ->followLinks()
             ->exclude('vendor')
+            ->exclude('node_modules')
             ->name('/\.php$/')
             ->in(Filesystem::getBaseDir());
 

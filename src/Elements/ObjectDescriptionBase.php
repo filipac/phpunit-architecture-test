@@ -12,7 +12,7 @@ use ReflectionClass;
 
 abstract class ObjectDescriptionBase
 {
-    public ObjectType $type;
+    public string $type;
 
     public string $path;
 
@@ -51,13 +51,12 @@ abstract class ObjectDescriptionBase
         $stmts = ServiceContainer::$nodeTraverser->traverse($ast);
 
         /** @var Node\Stmt\Class_|Node\Stmt\Trait_|Node\Stmt\Interface_|Node\Stmt\Enum_|null $object */
-        $object = ServiceContainer::$nodeFinder->findFirst($stmts, function (Node $node) {
+        $object = ServiceContainer::$nodeFinder->findFirst($stmts, static function (Node $node) {
             return $node instanceof Node\Stmt\Class_
                 || $node instanceof Node\Stmt\Trait_
                 || $node instanceof Node\Stmt\Interface_
-                || $node instanceof Node\Stmt\Enum_
-                //
-            ;
+                || $node instanceof Node\Stmt\Enum_//
+                ;
         });
 
         if ($object === null) {
@@ -75,21 +74,23 @@ abstract class ObjectDescriptionBase
         $description = new static(); // @phpstan-ignore-line
 
         if ($object instanceof Node\Stmt\Class_) {
-            $description->type = ObjectType::_CLASS;
+            $description->type = 'class';
         } elseif ($object instanceof Node\Stmt\Trait_) {
-            $description->type = ObjectType::_TRAIT;
+            $description->type = 'trait';
         } elseif ($object instanceof Node\Stmt\Interface_) {
-            $description->type = ObjectType::_INTERFACE;
+            $description->type = 'interface';
         } elseif ($object instanceof Node\Stmt\Enum_) {
-            $description->type = ObjectType::_ENUM;
+            $description->type = 'enum';
         }
 
         /** @var class-string $className */
         $className = $object->namespacedName->toString();
 
-        $description->path            = $path;
-        $description->name            = $className;
-        $description->stmts           = $stmts;
+//        ray($description, $className, $path);
+
+        $description->path = $path;
+        $description->name = $className;
+        $description->stmts = $stmts;
         $description->reflectionClass = new ReflectionClass($description->name);
 
         return $description;

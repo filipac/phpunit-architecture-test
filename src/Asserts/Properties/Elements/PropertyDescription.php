@@ -7,7 +7,6 @@ namespace PHPUnit\Architecture\Asserts\Properties\Elements;
 use Exception;
 use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 use PHPUnit\Architecture\Asserts\Properties\ObjectPropertiesDescription;
-use PHPUnit\Architecture\Enums\Visibility;
 use PHPUnit\Architecture\Services\ServiceContainer;
 use ReflectionIntersectionType;
 use ReflectionNamedType;
@@ -23,22 +22,23 @@ final class PropertyDescription
      */
     public $type;
 
-    public Visibility $visibility;
+    public string $visibility;
 
     public static function make(
         ObjectPropertiesDescription $objectPropertiesDescription,
         ReflectionProperty $reflectionProperty
     ): self {
+
         $description = new static();
         $description->name = $reflectionProperty->getName();
         $description->type = self::getPropertyType($objectPropertiesDescription, $reflectionProperty);
 
         if ($reflectionProperty->isPrivate()) {
-            $description->visibility = Visibility::PRIVATE;
+            $description->visibility = 'private';
         } elseif ($reflectionProperty->isProtected()) {
-            $description->visibility = Visibility::PROTECTED;
+            $description->visibility = 'protected';
         } else {
-            $description->visibility = Visibility::PUBLIC;
+            $description->visibility = 'public';
         }
 
         return $description;
@@ -51,10 +51,11 @@ final class PropertyDescription
         ObjectPropertiesDescription $objectPropertiesDescription,
         ReflectionProperty $reflectionProperty
     ): string|array|null {
+
         $type = $reflectionProperty->getType();
         if ($type !== null) {
             if ($type instanceof ReflectionUnionType) {
-                return array_map(static fn ($type) => $type->getName(), $type->getTypes());
+                return array_map(static fn($type) => $type->getName(), $type->getTypes());
             }
 
             if ($type instanceof ReflectionIntersectionType) {
@@ -64,7 +65,6 @@ final class PropertyDescription
             /** @var ReflectionNamedType $type */
             return $type->getName();
         }
-
 
         $docComment = $reflectionProperty->getDocComment();
         if (empty($docComment)) {
@@ -92,7 +92,6 @@ final class PropertyDescription
 
         return null;
     }
-
 
     public function __toString()
     {

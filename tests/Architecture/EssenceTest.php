@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace tests\Architecture;
 
-use PHPUnit\Architecture\Enums\Visibility;
 use tests\TestCase;
 
 final class EssenceTest extends TestCase
@@ -15,13 +14,13 @@ final class EssenceTest extends TestCase
             ->leaveByNameStart('PHPUnit\\Architecture\\Asserts\\')
             ->leaveByNameRegex('/Elements\\\\Object[^\\\\]+$/');
 
-        /** @var Visibility[] $visibilities */
+        /** @var string[] $visibilities */
         $visibilities = $objectParts->essence('properties.*.visibility');
 
         $this->assertNotOne(
             $visibilities,
-            fn (Visibility $visibility) => $visibility === Visibility::PRIVATE,
-            fn (string|int $key, Visibility $visibility) => "Property $key : {$visibility->value} is not private"
+            fn(string $visibility) => $visibility === 'private',
+            fn(string|int $key, string $visibility) => "Property $key : {$visibility} is not private"
         );
     }
 }
